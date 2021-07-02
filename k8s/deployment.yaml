@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: apiconversao-deployment
 spec:
-  replicas: 10
+  replicas: 1
   selector:
     matchLabels:
       app: apiconversao
@@ -14,6 +14,31 @@ spec:
     spec:
       containers:
         - name: apiconversao-site
-          image: vaniltonalv3sfilho/api-conversao:v1
+          image: vaniltonalv3sfilho/api-conversao:v2
           ports:
             - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 2
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 2
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 1
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "32Mi"
+            limits:
+              cpu: "400m"
+              memory: "64Mi"
